@@ -5,9 +5,16 @@ PDK ?= ihp-sg13g2
 
 RUN_TAG = $(shell ls librelane/runs/ -1 | tail -n 1)
 
+# Preprocessing
+
+preproc:
+	mkdir -p build
+	yosys -s synth/tt.ys
+.PHONY: preproc
+
 # Macro - LibreLane
 
-macro:
+macro: preproc
 	cd librelane; librelane config.yaml --pdk $(PDK)
 .PHONY: macro
 
