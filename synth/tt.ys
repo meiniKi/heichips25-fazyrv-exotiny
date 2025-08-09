@@ -1,3 +1,5 @@
+verilog_defaults -add -I FazyRV-ExoTiny/WdgRV/submodules/rggen-verilog-rtl/
+
 read_verilog -sv -defer FazyRV-ExoTiny/FazyRV/rtl/fazyrv_hadd.v
 read_verilog -sv -defer FazyRV-ExoTiny/FazyRV/rtl/fazyrv_fadd.v
 read_verilog -sv -defer FazyRV-ExoTiny/FazyRV/rtl/fazyrv_cmp.v
@@ -19,13 +21,29 @@ read_verilog -sv -defer FazyRV-ExoTiny/FazyRV/rtl/fazyrv_top.sv
 read_verilog -sv -defer FazyRV-ExoTiny/rtl/wb_qspi_mem.sv
 read_verilog -sv -defer FazyRV-ExoTiny/rtl/wb_regs.sv
 read_verilog -sv -defer FazyRV-ExoTiny/rtl/wb_spi.sv
+
+read_verilog -sv -defer FazyRV-ExoTiny/WdgRV/submodules/rggen-verilog-rtl/rggen_bit_field.v
+read_verilog -sv -defer FazyRV-ExoTiny/WdgRV/submodules/rggen-verilog-rtl/rggen_default_register.v
+read_verilog -sv -defer FazyRV-ExoTiny/WdgRV/submodules/rggen-verilog-rtl/rggen_wishbone_adapter.v
+read_verilog -sv -defer FazyRV-ExoTiny/WdgRV/submodules/rggen-verilog-rtl/rggen_adapter_common.v
+read_verilog -sv -defer FazyRV-ExoTiny/WdgRV/submodules/rggen-verilog-rtl/rggen_register_common.v
+read_verilog -sv -defer FazyRV-ExoTiny/WdgRV/submodules/rggen-verilog-rtl/rggen_mux.v
+read_verilog -sv -defer FazyRV-ExoTiny/WdgRV/submodules/rggen-verilog-rtl/rggen_address_decoder.v
+read_verilog -sv -defer FazyRV-ExoTiny/WdgRV/submodules/rggen-verilog-rtl/rggen_or_reducer.v
+read_verilog -sv -defer FazyRV-ExoTiny/WdgRV/rtl/wdg_top.v
+read_verilog -sv -defer FazyRV-ExoTiny/WdgRV/rtl/cntr.v
+read_verilog -sv -defer FazyRV-ExoTiny/WdgRV/rtl/fsm.v
+read_verilog -sv -defer FazyRV-ExoTiny/WdgRV/rtl/reg/wdgrv_regs.v
+read_verilog -sv -defer FazyRV-ExoTiny/WdgRV/rtl/clkdiv.v
+read_verilog -sv -defer FazyRV-ExoTiny/WdgRV/rtl/reset_ctrl.v
 read_verilog -sv -defer FazyRV-ExoTiny/rtl/exotiny.sv
+
+
 
 chparam -set CHUNKSIZE 4 exotiny
 chparam -set CONF "MIN" exotiny
 chparam -set RFTYPE "LOGIC" exotiny
 chparam -set GPICNT 6 exotiny
-chparam -set GPOCNT 1 exotiny
 
 hierarchy -check -top exotiny
 proc_clean
