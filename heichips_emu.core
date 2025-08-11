@@ -1,0 +1,37 @@
+CAPI=2:
+name: ::heichips_emu:0.0.1
+description: Emulation of HeiChips FazyRV ExoTiny CCX
+
+filesets:
+  soc:
+    files:
+      - build/exotiny_preproc.v
+      - src/heichips25_fazyrv_exotiny.sv
+      - emu/ecp5/heichips_ecp5.sv
+    file_type: systemVerilogSource
+
+  ulx3s:
+    files:
+      - emu/ecp5/ulx3s.lpf: {file_type: LPF}
+      - emu/ecp5/ulx3s.py: {copyto: ulx3s.py}
+    file_type: user
+
+targets:
+  ulx3s:
+    default_tool: trellis
+    filesets: [soc, ulx3s]
+    parameters: [ULX3S=True, PROG_INTERFACE=False]
+    tools:
+      trellis:
+        nextpnr_options: [--85k, --package, CABGA381, --speed, 8, --lpf-allow-unconstrained, --pre-pack, ulx3s.py]
+    toplevel: heichips_ecp5
+
+
+parameters:
+  ULX3S:
+    datatype    : bool
+    paramtype   : vlogdefine
+
+  PROG_INTERFACE:
+    datatype    : bool
+    paramtype   : vlogdefine

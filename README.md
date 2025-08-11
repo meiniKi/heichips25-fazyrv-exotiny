@@ -29,6 +29,31 @@ nix-shell
 make macro
 ```
 
+## Emulation
+
+Implement emulation wrapper for ULX3S.
+```
+fusesoc library add heichips_emu.core .
+fusesoc run --target=ulx3s heichips_emu
+```
+
+Load bitstream
+```
+openFPGALoader -d /dev/ttyUSB0 -b ulx3s build/heichips_emu_0.0.1/ulx3s-trellis/heichips_emu_0.0.1.bit
+```
+
+Build firmware
+```
+cd emu/firmware
+make
+```
+
+Program flash via RP2040 bridge and MUX in top-level wrapper.
+```
+cd emu/firmware
+rshell -p /dev/ttyACM0 --buffer-size 512 cp build/firmware.bin /pyboard/firmware.bin && rshell -p /dev/ttyACM0 --buffer-size 512 repl "~ exec(open('/flash_prog.py').read()) ~"
+```
+
 ## Checklist
 
 - [x] The project top-level has a unique name starting with `heichips25_`.
