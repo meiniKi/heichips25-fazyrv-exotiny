@@ -80,17 +80,21 @@ logic                 ccx_sel;
 logic [CHUNKSIZE-1:0] shift_res [0:RES_DLY-1];
 logic                 shift_req [0:(RES_DLY-1 + 32/CHUNKSIZE-1)];
 
-integer i;
+
 always_ff @(posedge clk_i) begin
   shift_res[0] <= ccx_rs_a & ccx_rs_b;
   shift_req[0] <= ccx_req;
-  for (i = 1; i < RES_DLY; i = i + 1) begin
-      shift_res[i] <= shift_res[i-1];
-  end
-  for (i = 1; i < RES_DLY + 32/CHUNKSIZE-1; i = i + 1) begin
-      shift_req[i] <= shift_req[i-1];
-  end
 end
+
+genvar i;
+generate for (i = 1; i < RES_DLY; i++) begin
+  always_ff @(posedge clk_i) shift_res[i] <= shift_res[i-1];
+end endgenerate
+
+generate for (i = 1; i < RES_DLY + 32/CHUNKSIZE-1; i++) begin
+  always_ff @(posedge clk_i) shift_req[i] <= shift_req[i-1];
+end endgenerate
+
 
 assign ccx_res  = shift_res[RES_DLY-1];
 assign ccx_resp = shift_req[RES_DLY-1 + 32/CHUNKSIZE-1];
@@ -114,9 +118,9 @@ assign sck      = chip_uio_out_wire[3];
 
 assign gpo = chip_uio_out_wire[7];
 
-assign ccx_sel = chip_uio_oe_in_wire[0];
+assign ccx_sel    = chip_uio_oe_in_wire[0];
 assign core_sdoen = chip_uio_oe_in_wire[4:1];
-assign ccx_req = chip_uio_oe_in_wire[5];
+assign ccx_req    = chip_uio_oe_in_wire[5];
 
 assign spi_sck = chip_uio_oe_in_wire[6];
 assign spi_sdo = chip_uio_oe_in_wire[7];

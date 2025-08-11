@@ -35,6 +35,8 @@ module heichips_ecp5 (
 );
 
 localparam CONF = "MIN";
+localparam CHUNKSIZE = 4;
+localparam RES_DLY = 5;
 
 // Invert rst if needed
 logic rst_inpt;
@@ -139,42 +141,13 @@ BB buf3 (.I(muxed_sdo[3]), .T(~muxed_sdoen[3]), .O(core_sdi[3]), .B(qspi_sdio_io
 
 localparam CLK_MEM_FACTOR = 1;
 
-logic [7:0] ui_in;
-logic [7:0] uo_out;
-logic [7:0] uio_in;
-logic [7:0] uio_out;
-logic [7:0] uio_oe;
+logic [7:0] chip_ui_in_wire;
+logic [7:0] chip_ui_uo_out_wire;
+logic [7:0] chip_uio_in_wire;
+logic [7:0] chip_uio_out_wire;
+logic [7:0] chip_uio_oe_in_wire;
 
-logic ena;
-
-// Reverse Mappaing to test from top-level interface
-//
-
-// QSPI Mem
-assign qspi_cs_ram_on = uio_out[6];
-assign core_cs_rom    = uio_out[0];
-assign core_sck       = uio_out[3];
-assign core_sdo       = {uio_out[5:4], uio_out[2:1]};
-assign core_sdoen     = uio_oe[4:1];
-
-assign uio_in[3:0] = core_sdi;
-
-// SPI
-assign spi_sck_o      = uio_oe[6];
-assign spi_sdo_o      = uio_oe[7];
-assign ui_in[7]       = spi_sdi_i;
-
-// Input
-assign ui_in[6:4]     = gpi_i[5:3];
-assign uio_in[7:5]    = gpi_i[2:0];
-
-// Output
-assign gpo_o          = uio_out[7];
-
-// CCX
-// This is used to emulate a custom instruction if present
-//
-localparam CHUNKSIZE = 4;
+logic chip_ena_wire;
 
 logic [CHUNKSIZE-1:0] ccx_rs_a;
 logic [CHUNKSIZE-1:0] ccx_rs_b;
@@ -185,45 +158,69 @@ logic                 ccx_resp;
 
 logic                 ccx_sel;
 
-assign ccx_rs_a = uo_out[3:0];
-assign ccx_rs_b = uo_out[7:4];
-assign ccx_sel  = uio_oe[0];
-assign ccx_req  = uio_oe[5];
+logic [CHUNKSIZE-1:0] shift_res [0:RES_DLY-1];
+logic                 shift_req [0:(RES_DLY-1 + 32/CHUNKSIZE-1)];
+
+// CCX
+// This is used to emulate a custom instruction if present
+//
+
+always_ff @(posedge clk_i) begin
+  shift_res[0] <= ccx_rs_a & ccx_rs_b;
+  shift_req[0] <= ccx_req;
+end
+
+genvar i;
+generate for (i = 1; i < RES_DLY; i++) begin
+  always_ff @(posedge clk_i) shift_res[i] <= shift_res[i-1];
+end endgenerate
+
+generate for (i = 1; i < RES_DLY + 32/CHUNKSIZE-1; i++) begin
+  always_ff @(posedge clk_i) shift_req[i] <= shift_req[i-1];
+end endgenerate
+
 assign ccx_res  = shift_res[RES_DLY-1];
 assign ccx_resp = shift_req[RES_DLY-1 + 32/CHUNKSIZE-1];
 
 
-localparam RES_DLY = 5;
+// Reverse Mappaing to test from top-level interface
+//
+assign chip_ui_in_wire  = {spi_sdi_i, gpi_i[5:3], ccx_res};
+assign chip_uio_in_wire = {gpi_i[2:0], ccx_resp, core_sdi};
+assign chip_ena_wire    = 1'b0; // todo: another input?
 
-logic [CHUNKSIZE-1:0] shift_res [0:RES_DLY-1];
-logic                 shift_req [0:(RES_DLY-1 + 32/CHUNKSIZE-1)];
+assign ccx_rs_a = chip_ui_uo_out_wire[3:0];
+assign ccx_rs_b = chip_ui_uo_out_wire[7:4];
 
-integer i;
-always_ff @(posedge clk_i) begin
-  shift_res[0] <= ccx_rs_a & ccx_rs_b;
-  shift_req[0] <= ccx_req;
-  for (i = 1; i < RES_DLY; i = i + 1) begin
-      shift_res[i] <= shift_res[i-1];
-  end
-  for (i = 1; i < RES_DLY + 32/CHUNKSIZE-1; i = i + 1) begin
-      shift_req[i] <= shift_req[i-1];
-  end
-end
+assign core_sdo = { chip_uio_out_wire[5], chip_uio_out_wire[4], 
+                    chip_uio_out_wire[2], chip_uio_out_wire[1]};
+
+assign core_cs_rom    = chip_uio_out_wire[0];
+assign qspi_cs_ram_on = chip_uio_out_wire[6];
+assign core_sck       = chip_uio_out_wire[3];
+
+assign gpo_o = chip_uio_out_wire[7];
+
+assign ccx_sel    = chip_uio_oe_in_wire[0];
+assign core_sdoen = chip_uio_oe_in_wire[4:1];
+assign ccx_req    = chip_uio_oe_in_wire[5];
+
+assign spi_sck_o = chip_uio_oe_in_wire[6];
+assign spi_sdo_o = chip_uio_oe_in_wire[7];
 
 //
 // 
 
 heichips25_fazyrv_exotiny i_heichips25_fazyrv_exotiny (
-  .ui_in    ( ui_in   ),
-  .uo_out   ( uo_out  ),
-  .uio_in   ( uio_in  ),
-  .uio_out  ( uio_out ),
-  .uio_oe   ( uio_oe  ),
-  .ena      ( ena     ),
-  .clk      ( clk_sys ),
-  .rst_n    ( rst_n   )
+  .ui_in    ( chip_ui_in_wire     ),
+  .uo_out   ( chip_ui_uo_out_wire ),
+  .uio_in   ( chip_uio_in_wire    ),
+  .uio_out  ( chip_uio_out_wire   ),
+  .uio_oe   ( chip_uio_oe_in_wire ),
+  .ena      ( chip_ena_wire       ),
+  .clk      ( clk_sys             ),
+  .rst_n    ( rst_n               )
 );
-
 
 
 endmodule

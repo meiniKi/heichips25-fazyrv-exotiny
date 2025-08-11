@@ -50,10 +50,26 @@ void gpio(void)
 
   uint32_t g;
   uint32_t dly;
+  uint32_t masked;
+  uint32_t temp_gpi;
   
   while(1)
   {
-    g = ones(GPI);
+    temp_gpi = GPI;
+    
+    // force AND instruction to smoke-test CCX
+    // with modifed decoder (defined SMOKETEST_CCX).
+    register unsigned int mask asm("t1") = 0x00FF;
+    asm volatile (
+      "and %0, %1, %2\n"
+      : "=r" (masked)
+      : "r" (temp_gpi), "r" (mask)
+    );
+
+    g = ones(masked);
+    dly = 10000 * (uint32_t)g;
+
+    g = ones(GPI & 0x00FF);
     dly = 10000 * (uint32_t)g;
 
     GPIO = 0x01;
