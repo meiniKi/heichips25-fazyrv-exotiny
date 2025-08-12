@@ -2,6 +2,8 @@ __pycache__/
 sim_build/
 runs/
 build/
+slides/
+fusesoc.conf
 *.vvp
 *.fst
 *.a

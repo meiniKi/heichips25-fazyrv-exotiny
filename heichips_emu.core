@@ -16,6 +16,18 @@ filesets:
       - emu/ecp5/ulx3s.py: {copyto: ulx3s.py}
     file_type: user
 
+  tb_ecp5:
+    files:
+      - tb/qspi_psram.sv
+      - tb/spiflash.v
+      - emu/ecp5/heichips_ecp5_tb.sv
+    file_type: systemVerilogSource
+
+  mem_file:
+    files:
+      - emu/firmware/build/firmware.hex: {copyto: firmware.hex}
+    file_type: user
+
 targets:
   ulx3s:
     default_tool: trellis
@@ -26,6 +38,16 @@ targets:
         nextpnr_options: [--85k, --package, CABGA381, --speed, 8, --lpf-allow-unconstrained, --pre-pack, ulx3s.py]
     toplevel: heichips_ecp5
 
+  ecp5_sim:
+    default_tool: icarus
+    filesets: [soc, tb_ecp5, mem_file]
+    tools:
+      icarus:
+        iverilog_options:
+        - -g2005-sv
+    parameters:
+      - firmware=firmware.hex
+    toplevel: heichips_ecp5_tb
 
 parameters:
   ULX3S:
@@ -35,3 +57,8 @@ parameters:
   PROG_INTERFACE:
     datatype    : bool
     paramtype   : vlogdefine
+
+  firmware:
+    datatype    : str
+    description : Path to ram file
+    paramtype   : plusarg

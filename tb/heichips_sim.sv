@@ -66,7 +66,7 @@ logic       chip_ena_wire;
 
 // Test custom instruction
 //
-localparam RES_DLY = 5;
+localparam RES_DLY = 1;
 
 logic [CHUNKSIZE-1:0] ccx_rs_a;
 logic [CHUNKSIZE-1:0] ccx_rs_b;
@@ -78,7 +78,7 @@ logic                 ccx_resp;
 logic                 ccx_sel;
 
 logic [CHUNKSIZE-1:0] shift_res [0:RES_DLY-1];
-logic                 shift_req [0:(RES_DLY-1 + 32/CHUNKSIZE-1)];
+logic [0:(RES_DLY-1 + 32/CHUNKSIZE-1)] shift_req;
 
 
 always_ff @(posedge clk_i) begin
