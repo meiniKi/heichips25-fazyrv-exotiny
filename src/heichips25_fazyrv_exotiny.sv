@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: © 2025 Meinhard Kissich
+// SPDX-FileCopyrightText: © 2025 HeiChips'25 Hackathon Group: FazyRV ExoTiny CCX
 // SPDX-License-Identifier: Apache-2.0
 
 // Adapted from the Tiny Tapeout template
