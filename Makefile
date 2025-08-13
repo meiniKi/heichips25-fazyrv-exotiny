@@ -18,6 +18,10 @@ macro: preproc
 	cd librelane; librelane config.yaml --pdk $(PDK)
 .PHONY: macro
 
+logo_test:
+	cd librelane; librelane config.yaml --pdk $(PDK)
+.PHONY: logo_test
+
 macro-openroad:
 	cd librelane; librelane config.yaml --pdk $(PDK) --last-run --flow OpenInOpenROAD
 .PHONY: macro-openroad

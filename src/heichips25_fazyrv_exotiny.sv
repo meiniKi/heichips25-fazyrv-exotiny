@@ -16,8 +16,16 @@ module heichips25_fazyrv_exotiny (
     input  wire       rst_n     // reset_n - low to reset
 );
 
-  // NOT TT compatible!
+`define TRIAL_RUN_LOGO
+// TODO: make sure revert config afterwards...
 
+`ifdef TRIAL_RUN_LOGO
+  assign uio_out = 'b0;
+  assign uo_out  = 'b0;
+  assign uio_oe  = ui_in | uio_in | {4'b0, ena, clk, rst_n};
+
+  // NOT TT compatible!
+`else
   localparam CHUNKSIZE = 4;
 
   logic       cs_rom_n;
@@ -43,9 +51,8 @@ module heichips25_fazyrv_exotiny (
   logic [1:0]           ccx_sel;    // just bit 0 used
 
   // Reset sync
-  // The one additional flop seems to stop detailed routing from converging.
-  //logic       rst_sync_n;
-  //always_ff @(posedge clk) rst_sync_n <= rst_n;
+  logic       rst_sync_n;
+  always_ff @(posedge clk) rst_sync_n <= rst_n;
 
   // QSPI ROM / RAM interface
   // on purpose additional tristate IOs are avoided
@@ -83,29 +90,32 @@ module heichips25_fazyrv_exotiny (
   assign gpi[5:0]   = {ui_in[6:4], uio_in[7:5]}; 
 
   exotiny i_exotiny (
-    .clk_i          ( clk       ),
-    .rst_in         ( rst_n     ),
+    .clk_i          ( clk         ),
+    .rst_in         ( rst_sync_n  ),
 
-    .gpi_i          ( gpi       ),
-    .gpo_o          ( gpo       ),
+    .gpi_i          ( gpi         ),
+    .gpo_o          ( gpo         ),
 
-    .mem_cs_ram_on  ( cs_ram_n  ),
-    .mem_cs_rom_on  ( cs_rom_n  ),
-    .mem_sck_o      ( sck       ),
-    .mem_sd_i       ( sdi       ),
-    .mem_sd_o       ( sdo       ),
-    .mem_sd_oen_o   ( sdoen     ),
+    .mem_cs_ram_on  ( cs_ram_n    ),
+    .mem_cs_rom_on  ( cs_rom_n    ),
+    .mem_sck_o      ( sck         ),
+    .mem_sd_i       ( sdi         ),
+    .mem_sd_o       ( sdo         ),
+    .mem_sd_oen_o   ( sdoen       ),
 
-    .spi_sck_o      ( spi_sck   ),
-    .spi_sdo_o      ( spi_sdo   ),
-    .spi_sdi_i      ( spi_sdi   ),
+    .spi_sck_o      ( spi_sck     ),
+    .spi_sdo_o      ( spi_sdo     ),
+    .spi_sdi_i      ( spi_sdi     ),
 
-    .ccx_rs_a_o     ( ccx_rs_a  ),
-    .ccx_rs_b_o     ( ccx_rs_b  ),
-    .ccx_res_i      ( ccx_res   ),
-    .ccx_sel_o      ( ccx_sel   ),
-    .ccx_req_o      ( ccx_req   ),
-    .ccx_resp_i     ( ccx_resp  )
+    .ccx_rs_a_o     ( ccx_rs_a    ),
+    .ccx_rs_b_o     ( ccx_rs_b    ),
+    .ccx_res_i      ( ccx_res     ),
+    .ccx_sel_o      ( ccx_sel     ),
+    .ccx_req_o      ( ccx_req     ),
+    .ccx_resp_i     ( ccx_resp    )
 );
+`endif
+
+(* keep *) fazyrv_small_logo i_fazyrv_small_logo ();
 
 endmodule
