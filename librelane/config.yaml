@@ -4,6 +4,7 @@ DESIGN_NAME: heichips25_fazyrv_exotiny
 VERILOG_FILES:
   - dir::../build/exotiny_preproc.v
   - dir::../src/heichips25_fazyrv_exotiny.sv
+  - dir::logo/rtl/fazyrv_small_logo.v
 
 CLOCK_PORT: clk
 CLOCK_PERIOD: 10 # 10ns = 100MHz
@@ -31,3 +32,6 @@ RT_MAX_LAYER: TopMetal1
 
 # Enable for better SystemVerilog support
 #USE_SLANG: true
+
+#PDN_OBSTRUCTIONS:
+# - [TopMetal1, 415, 25, 475, 75]
