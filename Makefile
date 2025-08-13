@@ -30,6 +30,17 @@ macro-klayout:
 	cd librelane; librelane config.yaml --pdk $(PDK) --last-run --flow OpenInKLayout
 .PHONY: macro-klayout
 
+insert-logo:
+	python3 scripts/insert_logo.py librelane/runs/${RUN_TAG}/final/gds/heichips25_fazyrv_exotiny.gds \
+		librelane/logo/gds/fazyrv_small_logo.gds \
+		librelane/runs/${RUN_TAG}/final/gds/heichips25_fazyrv_exotiny_logo.gds
+.PHONY: insert-logo
+
+copy-final:
+	cp -r librelane/runs/${RUN_TAG}/final .
+.PHONY: copy-final
+
+
 copy-macro:
 	mkdir -p macro/
 	rm -rf macro/*

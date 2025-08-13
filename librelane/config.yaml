@@ -2,7 +2,7 @@
 
 DESIGN_NAME: heichips25_fazyrv_exotiny
 VERILOG_FILES:
-#  - dir::../build/exotiny_preproc.v
+  - dir::../build/exotiny_preproc.v
   - dir::../src/heichips25_fazyrv_exotiny.sv
   - dir::logo/rtl/fazyrv_small_logo.v
 
@@ -33,22 +33,5 @@ RT_MAX_LAYER: TopMetal1
 # Enable for better SystemVerilog support
 #USE_SLANG: true
 
-# TODO: Check if we can fit logo inbetween
-# PDN_OBSTRUCTIONS:
-#  - [TopMetal1, 415, 25, 60, 60]
-
-# There should be enough empty area; lets try this first
-MACROS:
-  fazyrv_small_logo:
-    gds:
-      - dir::logo/gds/fazyrv_small_logo.gds
-    lef:
-      - dir::logo/lef/fazyrv_small_logo.lef
-    nl:
-      - dir::logo/rtl/fazyrv_small_logo.v
-    instances: 
-      i_fazyrv_small_logo:
-        location: [420, 20]
-        orientation: N
-
-IGNORE_DISCONNECTED_MODULES: [fazyrv_small_logo]
+#PDN_OBSTRUCTIONS:
+# - [TopMetal1, 415, 25, 475, 75]

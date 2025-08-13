@@ -16,16 +16,6 @@ module heichips25_fazyrv_exotiny (
     input  wire       rst_n     // reset_n - low to reset
 );
 
-`define TRIAL_RUN_LOGO
-// TODO: make sure revert config afterwards...
-
-`ifdef TRIAL_RUN_LOGO
-  assign uio_out = 'b0;
-  assign uo_out  = 'b0;
-  assign uio_oe  = ui_in | uio_in | {4'b0, ena, clk, rst_n};
-
-  // NOT TT compatible!
-`else
   localparam CHUNKSIZE = 4;
 
   logic       cs_rom_n;
@@ -114,8 +104,5 @@ module heichips25_fazyrv_exotiny (
     .ccx_req_o      ( ccx_req     ),
     .ccx_resp_i     ( ccx_resp    )
 );
-`endif
-
-(* keep *) fazyrv_small_logo i_fazyrv_small_logo ();
 
 endmodule
