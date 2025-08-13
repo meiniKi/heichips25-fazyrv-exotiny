@@ -27,6 +27,8 @@ make test_vcd
 ```
 nix-shell
 make macro
+make insert-logo
+make copy-final
 ```
 
 ## Emulation

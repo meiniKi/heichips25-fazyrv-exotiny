@@ -33,7 +33,7 @@ macro-klayout:
 insert-logo:
 	python3 scripts/insert_logo.py librelane/runs/${RUN_TAG}/final/gds/heichips25_fazyrv_exotiny.gds \
 		librelane/logo/gds/fazyrv_small_logo.gds \
-		librelane/runs/${RUN_TAG}/final/gds/heichips25_fazyrv_exotiny_logo.gds
+		librelane/runs/${RUN_TAG}/final/gds/heichips25_fazyrv_exotiny.gds
 .PHONY: insert-logo
 
 copy-final:
