@@ -39,7 +39,6 @@ read_verilog -sv -defer FazyRV-ExoTiny/WdgRV/rtl/reset_ctrl.v
 read_verilog -sv -defer FazyRV-ExoTiny/rtl/exotiny.sv
 
 
-
 chparam -set CHUNKSIZE 4 exotiny
 chparam -set CONF "MIN" exotiny
 chparam -set RFTYPE "LOGIC" exotiny

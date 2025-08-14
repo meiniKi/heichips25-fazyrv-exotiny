@@ -61,6 +61,9 @@
           trellis
           openfpgaloader
           
+          # 
+          klayout
+          
           #clang
           #zlib
           #cmake

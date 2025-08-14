@@ -2,7 +2,7 @@
 
 FazyRV ExoTiny CCX implements an minimal-area SoC with custom instruction interface based on the FazyRV RISC-V core.
 
-![design](./doc/design.png)
+![design](./doc/design_small.png)
 
 ## Overview
 The implementation and documentation are split across multiple repositories:
@@ -27,8 +27,8 @@ make test_vcd
 ```
 nix-shell
 make macro
-make insert-logo
 make copy-final
+make insert-logo
 ```
 
 ## Emulation

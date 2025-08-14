@@ -32,4 +32,4 @@ if __name__ == "__main__":
     
     args = parser.parse_args()
     
-    insert_logo(args.input_gds, args.logo_gds, args.output_gds, offset=(412.8, 15))
+    insert_logo(args.input_gds, args.logo_gds, args.output_gds, offset=(412.5, 10.0))
