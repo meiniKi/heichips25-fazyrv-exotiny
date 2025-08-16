@@ -10,6 +10,17 @@ filesets:
       - emu/ecp5/heichips_ecp5.sv
     file_type: systemVerilogSource
 
+  cells:
+    files:
+      - /home/meinhard/.ciel/ihp-sg13g2/libs.ref/sg13g2_stdcell/verilog/sg13g2_stdcell.v
+    file_type: verilogSource
+
+  soc_nl:
+    files:
+      - final/nl/heichips25_fazyrv_exotiny.nl.v
+      - emu/ecp5/heichips_ecp5.sv
+    file_type: verilogSource
+
   ulx3s:
     files:
       - emu/ecp5/ulx3s.lpf: {file_type: LPF}
@@ -49,6 +60,18 @@ targets:
       - firmware=firmware.hex
     toplevel: heichips_ecp5_tb
 
+  ecp5_sim_nl:
+    default_tool: icarus
+    filesets: [cells, soc_nl, tb_ecp5, mem_file]
+    tools:
+      icarus:
+        iverilog_options:
+        - -g2005-sv
+    parameters:
+      - firmware=firmware.hex
+      - FUNCTIONAL=True
+    toplevel: heichips_ecp5_tb
+
 parameters:
   ULX3S:
     datatype    : bool
@@ -58,7 +81,14 @@ parameters:
     datatype    : bool
     paramtype   : vlogdefine
 
+  FUNCTIONAL:
+    datatype    : bool
+    paramtype   : vlogdefine
+
   firmware:
     datatype    : str
     description : Path to ram file
     paramtype   : plusarg
+
+
+    
